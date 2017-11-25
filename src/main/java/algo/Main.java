@@ -44,7 +44,7 @@ public class Main {
     // number of movers to goal from initial state
     // sequence of states to goal
     public static void main(String[] args) {
-        short[] map = generateMap(6);
+        short[] map = generateMap(5);
 //        short[] map = new short[] {
 //                18, 19,  15, 1, 21,
 //                23, 0,   2, 20, 12,
@@ -55,7 +55,7 @@ public class Main {
         double begin = System.currentTimeMillis();
         new SearchAlgorithm(
                 map,
-                HeuristicFunctions::hammingDistance
+                HeuristicFunctions::manhattanDistance
         ).search();
         System.out.println(System.currentTimeMillis() - begin);
         System.out.println();

@@ -46,10 +46,10 @@ public final class SearchAlgorithm {
         openNodes.add(root);
         printField(root.state.field);
         int openNodesMax = 0;
-//        if (!isUnresolvable(root.state.field, root.state.position)) {
-//            System.out.println("Sorry, not solvable");
-//            return null;
-//        }
+        if (!isUnresolvable(root.state.field, root.state.position)) {
+            System.out.println("Sorry, not solvable");
+            return null;
+        }
         root.state.cost = heuristicFunction.apply(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
@@ -123,7 +123,8 @@ public final class SearchAlgorithm {
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }
-        return (size % 2 != 0  && inversion % 2 == 0)
-                || (size % 2 == 0 && ((emptyPosition / size) % 2 == 0) == (inversion % 2 == 0));
+        // todo pair
+        return (size % 2 != 0  && inversion % 2 == 0);
+//                || (size % 2 == 0 && (((++emptyPosition / size) + 1) % 2 != 0) && (inversion % 2 == 0));
     }
 }
