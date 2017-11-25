@@ -21,10 +21,10 @@ public final class SearchAlgorithm {
     ) {
         this.size = (short) Math.sqrt(field.length + 1);
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
-            if (o1.state.prediction == o2.state.prediction) {
+            if (o1.state.cost == o2.state.cost) {
                 return o1.state.distance - o2.state.distance;
             } else {
-                return o1.state.prediction - o2.state.prediction;
+                return o1.state.cost - o2.state.cost;
             }
         });
         this.closedNodes = new HashMap<>();
@@ -44,23 +44,52 @@ public final class SearchAlgorithm {
 
     public List<State> search() {
         openNodes.add(root);
-        while (!openNodes.isEmpty()) {
+        root.state.cost = heuristicFunction.apply(root.state.field);
+        while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
+//            printField(n.state.field);
             if (closedNodes.containsKey(n.state)) {
                 continue;
             }
-            if (n.state.prediction == 0 && n.parent != null) {
+            if (n.state.cost == 0) {
                 for (Node p = n; p != null; p = p.parent)
                     path.add(p.state);
                 break;
             }
             closedNodes.put(n.state, n);
             for (int i = 0; i < Transition.values().length; i++) {
-                Node node = new Node(n, n.state.move(Transition.values()[i], size));
-                node.state.prediction = heuristicFunction.apply(node.state.field);
-                openNodes.add(node);
+                State state = n.state.move(Transition.values()[i], size);
+                if (state != null) {
+                    Node node = new Node(n, state);
+                    node.state.cost = heuristicFunction.apply(node.state.field);
+                    openNodes.add(node);
+                }
             }
         }
+        printPath();
+        System.out.println(path.size());
+        System.out.println(openNodes.size());
         return path;
+    }
+
+    private void printPath() {
+        Collections.reverse(path);
+        path.forEach(node -> {
+            if (node.parentAction != null) {
+                System.out.println(node.parentAction);
+                System.out.println();
+            }
+            printField(node.field);
+        });
+    }
+
+    private void printField(short[] field) {
+        for (int i = 0; i < field.length; i++) {
+            System.out.print(field[i] + " ");
+            if ((i + 1) % size == 0) {
+                System.out.println();
+            }
+        }
+        System.out.println();
     }
 }

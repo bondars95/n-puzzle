@@ -1,5 +1,5 @@
 package game;
 
-public enum  Transition {
-    UP, DOWN, LEFT, RIGHT
+public enum Transition implements Cloneable {
+    UP, DOWN, LEFT, RIGHT;
 }

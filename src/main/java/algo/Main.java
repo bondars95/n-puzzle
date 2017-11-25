@@ -6,8 +6,8 @@ public class Main {
 
     public static void help() {
         System.out.println(
-            SIZE_FLAG + " => size of game board\n" +
-            FILE_FLAG + " => path to file (optional, if not present will be generated)"
+                SIZE_FLAG + " => size of game board\n" +
+                FILE_FLAG + " => path to file (optional, if not present will be generated)"
         );
     }
 
@@ -15,10 +15,15 @@ public class Main {
     // maximum number of states ever in memory
     // number of movers to goal from initial state
     // sequence of states to goal
-    public void showStats() {
-
-    }
     public static void main(String[] args) {
-        System.out.println("Hello n-puzzle");
+        new SearchAlgorithm(
+                new short[]{
+                    6,  5,  2,  13,
+                    8,  14,  3,  7,
+                    9,  10,  15,  4,
+                    1,   0,    12,  11
+                },
+                HeuristicFunctions::hammingDistance
+        ).search();
     }
 }
