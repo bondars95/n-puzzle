@@ -44,6 +44,12 @@ public final class SearchAlgorithm {
 
     public List<State> search() {
         openNodes.add(root);
+        printField(root.state.field);
+        int openNodesMax = 0;
+//        if (!isUnresolvable(root.state.field, root.state.position)) {
+//            System.out.println("Sorry, not solvable");
+//            return null;
+//        }
         root.state.cost = heuristicFunction.apply(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
@@ -65,10 +71,15 @@ public final class SearchAlgorithm {
                     openNodes.add(node);
                 }
             }
+//            System.out.println(closedNodes.size());
+            openNodesMax = openNodes.size() > openNodesMax ? openNodes.size() : openNodesMax;
         }
-        printPath();
+//        printPath();
         System.out.println(path.size());
-        System.out.println(openNodes.size());
+        System.out.println(closedNodes.size());
+        System.out.println(openNodesMax);
+        System.out.println("Initial state:");
+        printField(root.state.field);
         return path;
     }
 
@@ -91,5 +102,28 @@ public final class SearchAlgorithm {
             }
         }
         System.out.println();
+    }
+
+    private int countInversion(short[] field, int position) {
+        int current = field[position];
+        int count = 0;
+        for (int i = position + 1; i < field.length; i++) {
+            if (field[i] == 0) {
+                continue;
+            }
+            if (current > field[i]) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean isUnresolvable(short[] field, int emptyPosition) {
+        int inversion = 0;
+        for (int i = 0; i < field.length; i++) {
+            inversion += countInversion(field, i);
+        }
+        return (size % 2 != 0  && inversion % 2 == 0)
+                || (size % 2 == 0 && ((emptyPosition / size) % 2 == 0) == (inversion % 2 == 0));
     }
 }

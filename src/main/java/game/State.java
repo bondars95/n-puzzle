@@ -38,6 +38,8 @@ public class State {
         }
         clone.distance++;
         clone.parentAction = transition;
+        int x = clone.position % size;
+        int y = (clone.position + 1) / size;
         switch (transition) {
             case UP:
                 if (clone.position - size < 0 || clone.position - size > clone.field.length - 1) {
@@ -56,7 +58,7 @@ public class State {
                 clone.field[clone.position] = 0;
                 return  clone;
             case LEFT:
-                if (clone.position + 1 < 0 || clone.position + 1 > clone.field.length - 1) {
+                if (x == size - 1 || clone.position + 1 < 0 || clone.position + 1 > clone.field.length - 1) {
                     return null;
                 }
                 clone.field[clone.position] = clone.field[clone.position + 1];
@@ -64,7 +66,7 @@ public class State {
                 clone.field[clone.position] = 0;
                 return  clone;
             case RIGHT:
-                if (clone.position - 1 < 0 || clone.position - 1 > clone.field.length - 1) {
+                if (x == 0 || clone.position - 1 < 0 || clone.position - 1 > clone.field.length - 1) {
                     return null;
                 }
                 clone.field[clone.position] = clone.field[clone.position - 1];
