@@ -4,22 +4,19 @@ import java.util.Arrays;
 
 public class State {
     public Transition parentAction;
-    public final Transition nextAction;
-    public short[] field;
+    public byte[] field;
     public int position;
     public int cost;
     public int distance;
 
     public State(
-            final short[] field,
+            final byte[] field,
             final Transition parentAction,
-            final Transition nextAction,
             final int prediction,
             final int distance
     ) {
         this.field = field;
         this.parentAction = parentAction;
-        this.nextAction = nextAction;
         this.cost = prediction;
         this.distance = distance;
         for (int i = 0; i < field.length; i++) {
@@ -29,7 +26,7 @@ public class State {
         }
     }
 
-    public State move(Transition transition, int size) {
+    public State move(final Transition transition, final int size) {
         State clone;
         try {
             clone = this.copy();
@@ -48,7 +45,7 @@ public class State {
                 clone.field[clone.position] = clone.field[clone.position - size];
                 clone.position = clone.position - size;
                 clone.field[clone.position] = 0;
-                return  clone;
+                return clone;
             case DOWN:
                 if (clone.position + size < 0 || clone.position + size > clone.field.length - 1) {
                     return null;
@@ -56,7 +53,7 @@ public class State {
                 clone.field[clone.position] = clone.field[clone.position + size];
                 clone.position = clone.position + size;
                 clone.field[clone.position] = 0;
-                return  clone;
+                return clone;
             case LEFT:
                 if (x == size - 1 || clone.position + 1 < 0 || clone.position + 1 > clone.field.length - 1) {
                     return null;
@@ -64,7 +61,7 @@ public class State {
                 clone.field[clone.position] = clone.field[clone.position + 1];
                 clone.position = clone.position + 1;
                 clone.field[clone.position] = 0;
-                return  clone;
+                return clone;
             case RIGHT:
                 if (x == 0 || clone.position - 1 < 0 || clone.position - 1 > clone.field.length - 1) {
                     return null;
@@ -72,7 +69,7 @@ public class State {
                 clone.field[clone.position] = clone.field[clone.position - 1];
                 clone.position = clone.position - 1;
                 clone.field[clone.position] = 0;
-                return  clone;
+                return clone;
             default:
                 throw new RuntimeException("WTF");
         }
@@ -82,14 +79,13 @@ public class State {
         return new State(
                 field.clone(),
                 parentAction,
-                nextAction,
                 cost,
                 distance
         );
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
