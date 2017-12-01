@@ -1,12 +1,19 @@
 import algo.HeuristicFunctions;
 import algo.SearchAlgorithm;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import java.nio.file.Path;
+import java.io.IOException;
+
 
 public class Main {
     private static final char SIZE_FLAG = 's';
@@ -82,20 +89,37 @@ public class Main {
         executor.shutdown();
     }
 
+    /**
+     * Read file
+     * @param fileName
+     * @throws IOException
+     */
+    private static byte[] readUsingFiles(String fileName) throws IOException {
+        fileName = "src/java/" + fileName;
+        Path path = Paths.get(fileName);
+
+        byte[] map = Files.readAllBytes(path);
+        return map;
+    }
+
+
+
     // total number of opened unique states evere selected
     // maximum number of states ever in memory
     // number of movers to goal from initial state
     // sequence of states to goal
-    public static void main(String[] args) {
-//        byte[] map = generateMap(6);
-        byte[] map = new byte[]{
-                1, 14, 2, 4, 6, 18,
-                9, 13, 3, 17, 11, 33,
-                19, 7, 16, 10, 5, 12,
-                8, 26, 20, 15, 22, 24,
-                21, 31, 27, 29, 23, 30,
-                25, 0, 32, 28, 34, 35,
-        };
+    public static void main(String[] args) throws IOException {
+        byte[] map = readUsingFiles(args[1]);
+
+//          byte[] map = generateMap(3);
+//        byte[] map = new byte[]{
+//                1, 14, 2, 4, 6, 18,
+//                9, 13, 3, 17, 11, 33,
+//                19, 7, 16, 10, 5, 12,
+//                8, 26, 20, 15, 22, 24,
+//                21, 31, 27, 29, 23, 30,
+//                25, 0, 32, 28, 34, 35,
+//        };
 //        attachMemoryStats();
         double begin = System.currentTimeMillis();
         new SearchAlgorithm(
