@@ -95,7 +95,7 @@ public class Main {
      * @throws IOException
      */
     private static byte[] readUsingFiles(String fileName) throws IOException {
-        fileName = "src/java/" + fileName;
+        fileName = "/home/dtelega/" + fileName;
         Path path = Paths.get(fileName);
 
         byte[] map = Files.readAllBytes(path);
@@ -109,7 +109,7 @@ public class Main {
     // number of movers to goal from initial state
     // sequence of states to goal
     public static void main(String[] args) throws IOException {
-        byte[] map = readUsingFiles(args[0]);
+ //       byte[] map = readUsingFiles(args[0]);
 
 //          byte[] map = generateMap(3);
 //        byte[] map = new byte[]{
