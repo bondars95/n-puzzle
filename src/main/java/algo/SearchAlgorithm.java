@@ -42,7 +42,7 @@ public final class SearchAlgorithm {
 
     public SearchAlgorithm(
             final byte[] field,
-            final Function<byte[], Integer> heuristicFunction
+            final String heuristic
     ) {
         this.size = (short) Math.sqrt(field.length + 1);
         // comparator for sorting nodes based on its cost
@@ -56,7 +56,19 @@ public final class SearchAlgorithm {
         // high performance map
         this.closedNodes = new ObjectObjectOpenHashMap<>();
         this.path = new ArrayList<>();
-        this.heuristicFunction = heuristicFunction;
+        switch (heuristic) {
+            case "h":
+                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                break;
+            case "m":
+                this.heuristicFunction = HeuristicFunctions::manhattanDistance;
+                break;
+            case "e":
+                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                break;
+            default:
+                throw new RuntimeException("WTF");
+        }
         // init root
         this.root = new Node(
                 null,
@@ -156,12 +168,12 @@ public final class SearchAlgorithm {
         return count;
     }
 
-    //    If the grid width is odd, then the number of inversions
+//      If the grid width is odd, then the number of inversions
 //      in a solvable situation is even.
-//    If the grid width is even, and the blank is on an even
+//      If the grid width is even, and the blank is on an even
 //      row counting from the bottom (second-last, fourth-last etc),
 //      then the number of inversions in a solvable situation is odd.
-//    If the grid width is even, and the blank is on an odd row counting
+//      If the grid width is even, and the blank is on an odd row counting
 //      from the bottom (last, third-last, fifth-last etc)
 //      then the number of inversions in a solvable situation is even.
     private boolean isSolvable(byte[] field, int emptyPosition) {

@@ -1,53 +1,26 @@
-import algo.HeuristicFunctions;
 import algo.SearchAlgorithm;
+import org.apache.commons.cli.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static algo.Util.*;
 
 public class Main {
-    private static final char SIZE_FLAG = 's';
-    private static final char FILE_FLAG = 'f';
     private static AtomicBoolean ready = new AtomicBoolean(false);
+    private static final char comment = '#';
 
-    // todo implement
-    private static void help() {
-        System.out.println(
-                SIZE_FLAG + " => size of game board\n" +
-                        FILE_FLAG + " => path to file (optional, if not present will be generated)"
-        );
-    }
-
-    /**
-     * Take random integer in given range.
-     */
-    private static int randInt(int min, int max) {
-        Random rand = new Random();
-        return rand.nextInt((max - min) + 1) + min;
-    }
-
-    /**
-     * Generates map.
-     *
-     * @param size Size of map
-     * @return
-     */
-    private static byte[] generateMap(final int size) {
-        ArrayList<Integer> used = new ArrayList<>();
-        byte[] field = new byte[size * size];
-        for (int i = 0; i < field.length; i++) {
-            int random = randInt(0, size * size - 1);
-            while (used.contains(random)) {
-                random = randInt(0, size * size - 1);
-            }
-            used.add(random);
-            field[i] = (byte) random;
-        }
-        return field;
-    }
 
     /**
      * Runs daemon thread to monitor memory usage.
@@ -82,35 +55,93 @@ public class Main {
         executor.shutdown();
     }
 
+    private static byte[] readMap(String path) {
+        List<Integer> res = new ArrayList<>();
+        try (Stream<String> stream = Files.lines(Paths.get(path))) {
+            AtomicInteger size = new AtomicInteger(-1);
+            List<Integer> present = new ArrayList<>();
+            stream.forEach(line -> {
+                line = line.indexOf(comment) != -1 ? line.substring(0, line.indexOf(comment)) : line;
+                if (size.get() == -1) {
+                    size.set(Integer.parseInt(line.trim()));
+                }
+                res.addAll(
+                        Arrays.stream(line.trim().split("\\s+"))
+                                .map(val -> {
+                                    int parsed = Integer.parseInt(val);
+                                    if (parsed > size.get() - 1 || parsed < 0 || present.contains(parsed)) {
+                                        throw new RuntimeException("Map is not valid");
+                                    }
+                                    present.add(parsed);
+                                    return parsed;
+                                })
+                                .collect(Collectors.toList())
+                );
+            });
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+        byte[] map = new byte[res.size()];
+        for (int i = 0; i < res.size(); i++) {
+            map[i] = (byte) (int) res.get(i);
+        }
+        return map;
+    }
+
     // total number of opened unique states evere selected
     // maximum number of states ever in memory
     // number of movers to goal from initial state
     // sequence of states to goal
     public static void main(String[] args) {
-//        byte[] map = generateMap(6);
-        byte[] map = new byte[]{
-                1, 14, 2, 4, 6, 18,
-                9, 13, 3, 17, 11, 33,
-                19, 7, 16, 10, 5, 12,
-                8, 26, 20, 15, 22, 24,
-                21, 31, 27, 29, 23, 30,
-                25, 0, 32, 28, 34, 35,
-        };
-//        attachMemoryStats();
+
+        Options options = parseArguments(args);
+        String path;
+        String heuristic;
+        Integer size;
+        boolean stats;
+        try {
+            CommandLine cmd = new BasicParser().parse(options, args);
+            path = cmd.getOptionValue("map");
+            heuristic = cmd.getOptionValue("heuristic");
+            size = cmd.hasOption("size") ? new Integer(cmd.getOptionValue("size")) : null;
+            stats = cmd.hasOption("stats");
+            validateArguments(path, heuristic, size);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            new HelpFormatter().printHelp("utility-name", options);
+            System.exit(1);
+            return;
+        }
+        byte[] map = size != null ? generateMap(size) : readMap(path);
+        if (stats) attachMemoryStats();
+        doAlgo(map, heuristic);
+
+    }
+
+    public static void doAlgo(byte[] map, String heuristic) {
+//                byte[] map = new byte[]{
+//                1, 14, 2, 4, 6, 18,
+//                9, 13, 3, 17, 11, 33,
+//                19, 7, 16, 10, 5, 12,
+//                8, 26, 20, 15, 22, 24,
+//                21, 31, 27, 29, 23, 30,
+//                25, 0, 32, 28, 34, 35,
+//        };
         double begin = System.currentTimeMillis();
         new SearchAlgorithm(
                 map,
-                HeuristicFunctions::manhattanDistance
+                heuristic
         ).search();
-        System.out.println("Manhattan:");
+//        System.out.println("Manhattan:");
         System.out.println("Millis " + (System.currentTimeMillis() - begin));
         begin = System.currentTimeMillis();
-        System.out.println();
-        new SearchAlgorithm(
-                map,
-                HeuristicFunctions::hammingDistance
-        ).search();
-        System.out.println("Hammington");
-        System.out.println("Millis " + (System.currentTimeMillis() - begin));
+//        System.out.println();
+//        new SearchAlgorithm(
+//                map,
+//                "h"
+//        ).search();
+//        System.out.println("Hammington");
+//        System.out.println("Millis " + (System.currentTimeMillis() - begin));
     }
 }
