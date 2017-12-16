@@ -42,7 +42,7 @@ public class Main {
                         .append("\n");
                 System.out.println(sb.toString());
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -88,10 +88,12 @@ public class Main {
         return map;
     }
 
-    private static void doAlgo(final byte[] map, final String heuristic) {
+    private static void doAlgo(final byte[] map, final String heuristic, final boolean info, final boolean path) {
         double begin = System.currentTimeMillis();
-        new SearchAlgorithm(map, heuristic).search();
-        System.out.println("Millis " + (System.currentTimeMillis() - begin));
+        new SearchAlgorithm(map, heuristic).search(info, path);
+        if (info) {
+            System.out.println("Execution time in seconds: " + (System.currentTimeMillis() - begin) / 1000. + " sec.");
+        }
     }
 
     // total number of opened unique states evere selected
@@ -105,22 +107,29 @@ public class Main {
         String heuristic;
         Integer size;
         boolean stats;
+        boolean info;
+        boolean printPath;
         try {
             CommandLine cmd = new BasicParser().parse(options, args);
             path = cmd.getOptionValue("map");
             heuristic = cmd.getOptionValue("heuristic");
             size = cmd.hasOption("size") ? new Integer(cmd.getOptionValue("size")) : null;
             stats = cmd.hasOption("stats");
+            info = cmd.hasOption("info");
+            printPath = cmd.hasOption("path");
             validateArguments(path, heuristic, size);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            new HelpFormatter().printHelp("utility-name", options);
+            new HelpFormatter().printHelp("npuzzle", options);
             System.exit(1);
             return;
         }
-        System.out.println(size);
         byte[] map = size != null ? generateMap(size) : readMap(path);
         if (stats) attachMemoryStats();
-        doAlgo(map, heuristic);
+        try {
+            doAlgo(map, heuristic, info, printPath);
+        } catch (OutOfMemoryError e) {
+            ready.set(true);
+        }
     }
 }
