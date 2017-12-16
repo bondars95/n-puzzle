@@ -77,13 +77,16 @@ public class Util {
 
     public static void validateArguments(final String path, final String heuristic, final Integer size) {
         if (path != null && size != null) {
-            throw new RuntimeException("Either path to file or size should be choose");
+            System.out.println("Either path to file or size should be choose");
+            System.exit(1);
         }
         if (size != null && size > 10) {
-            throw new RuntimeException("Max size allowed 10");
+            System.out.println("Max size allowed 10");
+            System.exit(1);
         }
         if (!heuristic.equals("h") && !heuristic.equals("m") && !heuristic.equals("e")) {
-            throw new RuntimeException("Unknown heuristic " + heuristic);
+            System.out.println("Unknown heuristic " + heuristic);
+            System.exit(1);
         }
 
     }
