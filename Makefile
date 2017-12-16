@@ -1,3 +1,8 @@
+h = 
+s = 
+
+target = java -cp target/npuzzle-1.0-SNAPSHOT-jar-with-dependencies.jar Main
+
 all:
 	@mvn install
 	@mvn package
@@ -9,4 +14,4 @@ clean:
 re: clean all
 
 run:
-	java -cp target/npuzzle-1.0-SNAPSHOT-jar-with-dependencies.jar Main
+	${target} -h $h -s $s
