@@ -51,7 +51,7 @@ public class Util {
                 true,
                 "choose one of heuristic (h - hammington, m - manhattan, e - eqluid)"
         );
-        sizeOpt.setRequired(true);
+        heuristicOpt.setRequired(true);
 
         Options options = new Options();
         options.addOption(pathOpt);
@@ -62,7 +62,7 @@ public class Util {
         return options;
     }
 
-    public static void validateArguments(String path, String heuristic, Integer size) {
+    public static void validateArguments(final String path, final String heuristic, final Integer size) {
         if (path != null && size != null) {
             throw new RuntimeException("Either path to file or size should be choose");
         }

@@ -40,10 +40,7 @@ public final class SearchAlgorithm {
      */
     private final Function<byte[], Integer> heuristicFunction;
 
-    public SearchAlgorithm(
-            final byte[] field,
-            final String heuristic
-    ) {
+    public SearchAlgorithm(final byte[] field, final String heuristic) {
         this.size = (short) Math.sqrt(field.length + 1);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
@@ -90,7 +87,7 @@ public final class SearchAlgorithm {
         int openNodesMax = 0;
         if (!isSolvable(root.state.field, root.state.position)) {
             System.out.println("Sorry, not solvable");
-            return null;
+            return Collections.emptyList();
         }
         root.state.cost = heuristicFunction.apply(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
@@ -176,7 +173,7 @@ public final class SearchAlgorithm {
 //      If the grid width is even, and the blank is on an odd row counting
 //      from the bottom (last, third-last, fifth-last etc)
 //      then the number of inversions in a solvable situation is even.
-    private boolean isSolvable(byte[] field, int emptyPosition) {
+    private boolean isSolvable(final byte[] field, final int emptyPosition) {
         int inversion = 0;
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);

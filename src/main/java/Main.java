@@ -21,7 +21,6 @@ public class Main {
     private static AtomicBoolean ready = new AtomicBoolean(false);
     private static final char comment = '#';
 
-
     /**
      * Runs daemon thread to monitor memory usage.
      */
@@ -89,6 +88,12 @@ public class Main {
         return map;
     }
 
+    private static void doAlgo(final byte[] map, final String heuristic) {
+        double begin = System.currentTimeMillis();
+        new SearchAlgorithm(map, heuristic).search();
+        System.out.println("Millis " + (System.currentTimeMillis() - begin));
+    }
+
     // total number of opened unique states evere selected
     // maximum number of states ever in memory
     // number of movers to goal from initial state
@@ -113,35 +118,9 @@ public class Main {
             System.exit(1);
             return;
         }
+        System.out.println(size);
         byte[] map = size != null ? generateMap(size) : readMap(path);
         if (stats) attachMemoryStats();
         doAlgo(map, heuristic);
-
-    }
-
-    public static void doAlgo(byte[] map, String heuristic) {
-//                byte[] map = new byte[]{
-//                1, 14, 2, 4, 6, 18,
-//                9, 13, 3, 17, 11, 33,
-//                19, 7, 16, 10, 5, 12,
-//                8, 26, 20, 15, 22, 24,
-//                21, 31, 27, 29, 23, 30,
-//                25, 0, 32, 28, 34, 35,
-//        };
-        double begin = System.currentTimeMillis();
-        new SearchAlgorithm(
-                map,
-                heuristic
-        ).search();
-//        System.out.println("Manhattan:");
-        System.out.println("Millis " + (System.currentTimeMillis() - begin));
-        begin = System.currentTimeMillis();
-//        System.out.println();
-//        new SearchAlgorithm(
-//                map,
-//                "h"
-//        ).search();
-//        System.out.println("Hammington");
-//        System.out.println("Millis " + (System.currentTimeMillis() - begin));
     }
 }
