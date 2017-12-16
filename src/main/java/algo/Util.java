@@ -21,16 +21,21 @@ public class Util {
      * @return generated map
      */
     public static byte[] generateMap(final int size) {
-        ArrayList<Integer> used = new ArrayList<>();
-        byte[] field = new byte[size * size];
-        for (int i = 0; i < field.length; i++) {
-            int random = randInt(0, size * size - 1);
-            while (used.contains(random)) {
-                random = randInt(0, size * size - 1);
+        byte[] field = null;
+        int position = 0;
+        do {
+            ArrayList<Integer> used = new ArrayList<>();
+            field = new byte[size * size];
+            for (int i = 0; i < field.length; i++) {
+                int random = randInt(0, size * size - 1);
+                while (used.contains(random)) {
+                    random = randInt(0, size * size - 1);
+                }
+                if (random == 0) position = i;
+                used.add(random);
+                field[i] = (byte) random;
             }
-            used.add(random);
-            field[i] = (byte) random;
-        }
+        } while (!SearchAlgorithm.isSolvable(field, position));
         return field;
     }
 
@@ -44,6 +49,12 @@ public class Util {
         // Stats
         Option statsOpt = new Option("st", "stats", false, "show memory usage in runtime");
         statsOpt.setRequired(false);
+        // Info
+        Option infoOpt = new Option("i", "info", false, "show addition information on algorithm");
+        infoOpt.setRequired(false);
+        // Path
+        Option showPathOpt = new Option("p", "path", false, "show final path");
+        infoOpt.setRequired(false);
         // Heuristic
         Option heuristicOpt = new Option(
                 "h",
@@ -55,9 +66,11 @@ public class Util {
 
         Options options = new Options();
         options.addOption(pathOpt);
+        options.addOption(showPathOpt);
         options.addOption(sizeOpt);
         options.addOption(heuristicOpt);
         options.addOption(statsOpt);
+        options.addOption(infoOpt);
 
         return options;
     }
