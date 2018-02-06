@@ -40,10 +40,7 @@ public final class SearchAlgorithm {
      */
     private final Function<byte[], Integer> heuristicFunction;
 
-    public SearchAlgorithm(
-            final byte[] field,
-            final Function<byte[], Integer> heuristicFunction
-    ) {
+    public SearchAlgorithm(final byte[] field, final String heuristic) {
         this.size = (short) Math.sqrt(field.length + 1);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
@@ -56,7 +53,19 @@ public final class SearchAlgorithm {
         // high performance map
         this.closedNodes = new ObjectObjectOpenHashMap<>();
         this.path = new ArrayList<>();
-        this.heuristicFunction = heuristicFunction;
+        switch (heuristic) {
+            case "h":
+                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                break;
+            case "m":
+                this.heuristicFunction = HeuristicFunctions::manhattanDistance;
+                break;
+            case "e":
+                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                break;
+            default:
+                throw new RuntimeException("WTF");
+        }
         // init root
         this.root = new Node(
                 null,
@@ -72,18 +81,17 @@ public final class SearchAlgorithm {
     /**
      * Performs search of final path.
      */
-    public List<State> search() {
+    public void search(final boolean info, final boolean printPath) {
         openNodes.add(root);
-        printField(root.state.field);
         int openNodesMax = 0;
         if (!isSolvable(root.state.field, root.state.position)) {
             System.out.println("Sorry, not solvable");
-            return null;
+            return;
         }
         root.state.cost = heuristicFunction.apply(root.state.field);
+        printField(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
-//            printField(n.state.field);
             if (closedNodes.containsKey(n.state)) {
                 continue;
             }
@@ -103,13 +111,16 @@ public final class SearchAlgorithm {
             }
             openNodesMax = openNodes.size() > openNodesMax ? openNodes.size() : openNodesMax;
         }
-//        printPath();
-        System.out.println("Path size: " + path.size());
-        System.out.println("Open nodes: " + openNodesMax);
-        System.out.println("Closed nodes: " + closedNodes.size());
-        System.out.println("Initial state:");
-        printField(root.state.field);
-        return path;
+        if (printPath) {
+            printPath();
+            System.out.println("Initial state:");
+            printField(root.state.field);
+        }
+        if (info) {
+            System.out.println("Path size: " + path.size());
+            System.out.println("Open nodes: " + openNodesMax);
+            System.out.println("Closed nodes: " + closedNodes.size());
+        }
     }
 
     /**
@@ -142,7 +153,7 @@ public final class SearchAlgorithm {
     /**
      * Utility function to count inversion.
      */
-    private int countInversion(byte[] field, int position) {
+    private static int countInversion(byte[] field, int position) {
         int current = field[position];
         int count = 0;
         for (int i = position + 1; i < field.length; i++) {
@@ -156,16 +167,17 @@ public final class SearchAlgorithm {
         return count;
     }
 
-    //    If the grid width is odd, then the number of inversions
+//      If the grid width is odd, then the number of inversions
 //      in a solvable situation is even.
-//    If the grid width is even, and the blank is on an even
+//      If the grid width is even, and the blank is on an even
 //      row counting from the bottom (second-last, fourth-last etc),
 //      then the number of inversions in a solvable situation is odd.
-//    If the grid width is even, and the blank is on an odd row counting
+//      If the grid width is even, and the blank is on an odd row counting
 //      from the bottom (last, third-last, fifth-last etc)
 //      then the number of inversions in a solvable situation is even.
-    private boolean isSolvable(byte[] field, int emptyPosition) {
+    static boolean isSolvable(final byte[] field, final int emptyPosition) {
         int inversion = 0;
+        int size = (int) Math.sqrt(field.length);
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }

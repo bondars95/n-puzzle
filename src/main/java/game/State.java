@@ -75,7 +75,7 @@ public class State {
         }
     }
 
-    public State copy() throws CloneNotSupportedException {
+    private State copy() throws CloneNotSupportedException {
         return new State(
                 field.clone(),
                 parentAction,
