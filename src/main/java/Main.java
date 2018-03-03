@@ -66,7 +66,7 @@ public class Main {
                     System.out.println("size = "+size.get());
                 }
                 else if (size.get() != -1){
-                    if ((line.trim().split("\\s+").length) != 3)
+                    if ((line.trim().split("\\s+").length) != size.get())
                         throw new RuntimeException("Map is not valid");
                     res.addAll(
                             Arrays.stream(line.trim().split("\\s+"))
