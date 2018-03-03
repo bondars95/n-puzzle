@@ -1,5 +1,5 @@
-#s is a comment
-3$
-3 2 6 #another comment
-1 4 0
-8 7 5
+# comment
+3
+1 2 3 #another comment
+4 5 6
+7 0 8
