@@ -44,6 +44,12 @@ public class Util {
         // Stats
         Option statsOpt = new Option("st", "stats", false, "show memory usage in runtime");
         statsOpt.setRequired(false);
+        // Info
+        Option infoOpt = new Option("i", "info", false, "show addition information on algorithm");
+        infoOpt.setRequired(false);
+        // Path
+        Option showPathOpt = new Option("p", "path", false, "show final path");
+        infoOpt.setRequired(false);
         // Heuristic
         Option heuristicOpt = new Option(
                 "h",
@@ -55,22 +61,27 @@ public class Util {
 
         Options options = new Options();
         options.addOption(pathOpt);
+        options.addOption(showPathOpt);
         options.addOption(sizeOpt);
         options.addOption(heuristicOpt);
         options.addOption(statsOpt);
+        options.addOption(infoOpt);
 
         return options;
     }
 
-    public static void validateArguments(String path, String heuristic, Integer size) {
+    public static void validateArguments(final String path, final String heuristic, final Integer size) {
         if (path != null && size != null) {
-            throw new RuntimeException("Either path to file or size should be choose");
+            System.out.println("Either path to file or size should be choose");
+            System.exit(1);
         }
         if (size != null && size > 10) {
-            throw new RuntimeException("Max size allowed 10");
+            System.out.println("Max size allowed 10");
+            System.exit(1);
         }
         if (!heuristic.equals("h") && !heuristic.equals("m") && !heuristic.equals("e")) {
-            throw new RuntimeException("Unknown heuristic " + heuristic);
+            System.out.println("Unknown heuristic " + heuristic);
+            System.exit(1);
         }
 
     }

@@ -84,18 +84,17 @@ public final class SearchAlgorithm {
     /**
      * Performs search of final path.
      */
-    public List<State> search() {
+    public void search(final boolean info, final boolean printPath) {
         openNodes.add(root);
-        printField(root.state.field);
         int openNodesMax = 0;
         if (!isSolvable(root.state.field, root.state.position)) {
             System.out.println("Sorry, not solvable");
-            return null;
+            return;
         }
         root.state.cost = heuristicFunction.apply(root.state.field);
+        printField(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
-//            printField(n.state.field);
             if (closedNodes.containsKey(n.state)) {
                 continue;
             }
@@ -115,13 +114,16 @@ public final class SearchAlgorithm {
             }
             openNodesMax = openNodes.size() > openNodesMax ? openNodes.size() : openNodesMax;
         }
-//        printPath();
-        System.out.println("Path size: " + path.size());
-        System.out.println("Open nodes: " + openNodesMax);
-        System.out.println("Closed nodes: " + closedNodes.size());
-        System.out.println("Initial state:");
-        printField(root.state.field);
-        return path;
+        if (printPath) {
+            printPath();
+            System.out.println("Initial state:");
+            printField(root.state.field);
+        }
+        if (info) {
+            System.out.println("Path size: " + path.size());
+            System.out.println("Open nodes: " + openNodesMax);
+            System.out.println("Closed nodes: " + closedNodes.size());
+        }
     }
 
     /**
@@ -143,7 +145,7 @@ public final class SearchAlgorithm {
      */
     private void printField(byte[] field) {
         for (int i = 0; i < field.length; i++) {
-            System.out.print(field[i] + ", ");
+            System.out.print(String.format("|%4d", field[i]));
             if ((i + 1) % size == 0) {
                 System.out.println();
             }
