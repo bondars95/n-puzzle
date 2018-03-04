@@ -135,7 +135,8 @@ public class Main {
         ).search();
 //        System.out.println("Manhattan:");
         System.out.println("Millis " + (System.currentTimeMillis() - begin));
-        begin = System.currentTimeMillis();
+        ready.set(true);
+//        begin = System.currentTimeMillis();
 //        System.out.println();
 //        new SearchAlgorithm(
 //                map,
