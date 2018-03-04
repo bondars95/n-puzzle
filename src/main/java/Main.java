@@ -63,9 +63,8 @@ public class Main {
                 line = line.indexOf(comment) != -1 ? line.substring(0, line.indexOf(comment)) : line;
                 if (size.get() == -1 && line.trim().length() > 0) {
                     size.set(Integer.parseInt(line.trim()));
-                    System.out.println("size = "+size.get());
                 }
-                else if (size.get() != -1){
+                else if (size.get() != -1 && line.trim().length() > 0){
                     if ((line.trim().split("\\s+").length) != size.get())
                         throw new RuntimeException("Map is not valid");
                     res.addAll(
