@@ -61,6 +61,7 @@ public class Main {
             List<Integer> present = new ArrayList<>();
             stream.forEach(line -> {
                 line = line.indexOf(comment) != -1 ? line.substring(0, line.indexOf(comment)) : line;
+<<<<<<< HEAD
                 if (size.get() == -1) {
                     size.set(Integer.parseInt(line.trim()));
                 }
@@ -76,6 +77,28 @@ public class Main {
                                 })
                                 .collect(Collectors.toList())
                 );
+=======
+                if (size.get() == -1 && line.trim().length() > 0) {
+                    size.set(Integer.parseInt(line.trim()));
+                    System.out.println("size = "+size.get());
+                }
+                else if (size.get() != -1){
+                    if ((line.trim().split("\\s+").length) != size.get())
+                        throw new RuntimeException("Map is not valid");
+                    res.addAll(
+                            Arrays.stream(line.trim().split("\\s+"))
+                                    .map(val -> {
+                                        int parsed = Integer.parseInt(val);
+                                        if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
+                                            throw new RuntimeException("Map is not valid");
+                                        }
+                                        present.add(parsed);
+                                        return parsed;
+                                    })
+                                    .collect(Collectors.toList())
+                    );
+                }
+>>>>>>> dtelega
             });
         } catch (IOException e) {
             System.out.println(e.getMessage());
