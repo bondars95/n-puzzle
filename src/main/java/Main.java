@@ -66,14 +66,17 @@ public class Main {
                     size.set(Integer.parseInt(line.trim()));
                 }
                 else if (size.get() != -1 && line.trim().length() > 0){
-                    if ((line.trim().split("\\s+").length) != size.get())
-                        throw new RuntimeException("Map is not valid");
+                    if ((line.trim().split("\\s+").length) != size.get()) {
+                        System.out.println("Map is not valid");
+                        System.exit(1);
+                    }
                     res.addAll(
                             Arrays.stream(line.trim().split("\\s+"))
                                     .map(val -> {
                                         int parsed = Integer.parseInt(val);
                                         if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
-                                            throw new RuntimeException("Map is not valid");
+                                            System.out.println("Map is not valid");
+                                            System.exit(1);
                                         }
                                         present.add(parsed);
                                         return parsed;
