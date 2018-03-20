@@ -40,7 +40,10 @@ public final class SearchAlgorithm {
      */
     private final Function<byte[], Integer> heuristicFunction;
 
-    public SearchAlgorithm(final byte[] field, final String heuristic) {
+    public SearchAlgorithm(
+            final byte[] field,
+            final String heuristic
+    ) {
         this.size = (short) Math.sqrt(field.length + 1);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
@@ -142,7 +145,7 @@ public final class SearchAlgorithm {
      */
     private void printField(byte[] field) {
         for (int i = 0; i < field.length; i++) {
-            System.out.print(field[i] + ", ");
+            System.out.print(String.format("|%4d", field[i]));
             if ((i + 1) % size == 0) {
                 System.out.println();
             }
@@ -153,7 +156,7 @@ public final class SearchAlgorithm {
     /**
      * Utility function to count inversion.
      */
-    private static int countInversion(byte[] field, int position) {
+    private int countInversion(byte[] field, int position) {
         int current = field[position];
         int count = 0;
         for (int i = position + 1; i < field.length; i++) {
@@ -175,9 +178,8 @@ public final class SearchAlgorithm {
 //      If the grid width is even, and the blank is on an odd row counting
 //      from the bottom (last, third-last, fifth-last etc)
 //      then the number of inversions in a solvable situation is even.
-    static boolean isSolvable(final byte[] field, final int emptyPosition) {
+    private boolean isSolvable(byte[] field, int emptyPosition) {
         int inversion = 0;
-        int size = (int) Math.sqrt(field.length);
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }

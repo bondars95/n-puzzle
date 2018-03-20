@@ -21,21 +21,16 @@ public class Util {
      * @return generated map
      */
     public static byte[] generateMap(final int size) {
-        byte[] field = null;
-        int position = 0;
-        do {
-            ArrayList<Integer> used = new ArrayList<>();
-            field = new byte[size * size];
-            for (int i = 0; i < field.length; i++) {
-                int random = randInt(0, size * size - 1);
-                while (used.contains(random)) {
-                    random = randInt(0, size * size - 1);
-                }
-                if (random == 0) position = i;
-                used.add(random);
-                field[i] = (byte) random;
+        ArrayList<Integer> used = new ArrayList<>();
+        byte[] field = new byte[size * size];
+        for (int i = 0; i < field.length; i++) {
+            int random = randInt(0, size * size - 1);
+            while (used.contains(random)) {
+                random = randInt(0, size * size - 1);
             }
-        } while (!SearchAlgorithm.isSolvable(field, position));
+            used.add(random);
+            field[i] = (byte) random;
+        }
         return field;
     }
 
