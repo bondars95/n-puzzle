@@ -134,7 +134,9 @@ public class Main {
         try {
             CommandLine cmd = new BasicParser().parse(options, args);
             path = cmd.getOptionValue("map");
-            heuristic = cmd.getOptionValue("heuristic");
+            heuristic = cmd.getOptionValue("heuristic");// ? null : heuristic = "h";
+            if (heuristic == null)
+                heuristic = "h";
             size = cmd.hasOption("size") ? new Integer(cmd.getOptionValue("size")) : null;
             stats = cmd.hasOption("stats");
             info = cmd.hasOption("info");
