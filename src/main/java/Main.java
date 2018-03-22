@@ -95,6 +95,7 @@ public class Main {
                 
             });
         } catch (IOException e) {
+            System.out.println("Bad path!");
             System.out.println(e.getMessage());
             System.exit(1);
         }
