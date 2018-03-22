@@ -1,0 +1,4 @@
+# 2x2 correct map
+2
+1 0
+3 2
