@@ -62,12 +62,16 @@ public class Main {
             List<Integer> present = new ArrayList<>();
             stream.forEach(line -> {
                 line = line.indexOf(comment) != -1 ? line.substring(0, line.indexOf(comment)) : line;
-                if (size.get() == -1 && line.trim().length() > 0) {
+                if (size.get() == -1 && line.trim().length() == 1) {
                     size.set(Integer.parseInt(line.trim()));
                 }
-                else if (size.get() != -1 && line.trim().length() > 0){
+                else if (size.get() == -1 && line.trim().length() > 0) {
+                    System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". Where ur size, dude?");
+                    System.exit(1);
+                }
+                else if (size.get() != -1 && line.trim().length() >= 0){
                     if ((line.trim().split("\\s+").length) != size.get()) {
-                        System.out.println("Map is not valid");
+                        System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". But size = "+size.get()+".");
                         System.exit(1);
                     }
                     res.addAll(
@@ -75,7 +79,11 @@ public class Main {
                                     .map(val -> {
                                         int parsed = Integer.parseInt(val);
                                         if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
-                                            System.out.println("Map is not valid");
+                                            System.out.print("Map is not valid \n\tFor input value: \""+parsed+"\".");
+                                            if (parsed > size.get() * size.get() - 1 || parsed < 0)
+                                                System.out.println(" Value must be between 0 .. "+(size.get() - 1)+"");
+                                            else
+                                                System.out.println(" Value already exist.");
                                             System.exit(1);
                                         }
                                         present.add(parsed);
@@ -84,6 +92,7 @@ public class Main {
                                     .collect(Collectors.toList())
                     );
                 }
+                
             });
         } catch (IOException e) {
             System.out.println(e.getMessage());
