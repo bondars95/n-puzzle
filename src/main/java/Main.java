@@ -62,14 +62,14 @@ public class Main {
             List<Integer> present = new ArrayList<>();
             stream.forEach(line -> {
                 line = line.indexOf(comment) != -1 ? line.substring(0, line.indexOf(comment)) : line;
-                if (size.get() == -1 && line.trim().length() == 1) {
+                if (size.get() == -1 && line.trim().length() > 0 && !line.trim().contains(" ")) {
                     size.set(Integer.parseInt(line.trim()));
                 }
                 else if (size.get() == -1 && line.trim().length() > 0) {
-                    System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". Where ur size, dude?");
+                    System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". Bad size.");
                     System.exit(1);
                 }
-                else if (size.get() != -1 && line.trim().length() >= 0){
+                else if (size.get() != -1 && line.trim().length() > 0){
                     if ((line.trim().split("\\s+").length) != size.get()) {
                         System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". But size = "+size.get()+".");
                         System.exit(1);
@@ -96,6 +96,10 @@ public class Main {
             });
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            System.exit(1);
+        }
+        if (res.size() == 0) {
+            System.out.println("Empty map!");
             System.exit(1);
         }
         byte[] map = new byte[res.size()];

@@ -1,5 +1,1 @@
 # 3x3 uncorrect map
-3
-1 4 0
-6 3 1
-2 5 8
