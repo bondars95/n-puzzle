@@ -57,7 +57,7 @@ public class Util {
                 true,
                 "choose one of heuristic (h - hammington, m - manhattan, e - eqluid)"
         );
-        heuristicOpt.setRequired(false);
+        heuristicOpt.setRequired(true);
 
         Options options = new Options();
         options.addOption(pathOpt);
