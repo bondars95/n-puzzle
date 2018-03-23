@@ -77,6 +77,10 @@ public class Main {
                     res.addAll(
                             Arrays.stream(line.trim().split("\\s+"))
                                     .map(val -> {
+                                        if (!val.matches("[-+]?\\d+")) {
+                                            System.out.println("Bad value \""+val+"\".");
+                                            System.exit(1);
+                                        }
                                         int parsed = Integer.parseInt(val);
                                         if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
                                             System.out.print("Map is not valid \n\tFor input value: \""+parsed+"\".");
@@ -134,9 +138,9 @@ public class Main {
         try {
             CommandLine cmd = new BasicParser().parse(options, args);
             path = cmd.getOptionValue("map");
-            heuristic = cmd.getOptionValue("heuristic");// ? null : heuristic = "h";
-            if (heuristic == null)
-                heuristic = "h";
+            heuristic = cmd.getOptionValue("heuristic");
+            //   if (heuristic == null)
+            //     heuristic = "h";
             size = cmd.hasOption("size") ? new Integer(cmd.getOptionValue("size")) : null;
             stats = cmd.hasOption("stats");
             info = cmd.hasOption("info");
