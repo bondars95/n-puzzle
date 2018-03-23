@@ -69,23 +69,23 @@ public class Main {
                     System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". Bad size.");
                     System.exit(1);
                 }
-                else if (size.get() != -1 && line.trim().length() > 0){
+                else if (size.get() != -1 && line.trim().length() > 0) {
                     if ((line.trim().split("\\s+").length) != size.get()) {
-                        System.out.println("Map is not valid!\n\tFor input string: \""+line+"\". But size = "+size.get()+".");
+                        System.out.println("Map is not valid!\n\tFor input string: \"" + line + "\". But size = " + size.get() + ".");
                         System.exit(1);
                     }
                     res.addAll(
                             Arrays.stream(line.trim().split("\\s+"))
                                     .map(val -> {
                                         if (!val.matches("[-+]?\\d+")) {
-                                            System.out.println("Bad value \""+val+"\".");
+                                            System.out.println("Bad value \"" + val + "\".");
                                             System.exit(1);
                                         }
                                         int parsed = Integer.parseInt(val);
                                         if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
-                                            System.out.print("Map is not valid \n\tFor input value: \""+parsed+"\".");
+                                            System.out.print("Map is not valid \n\tFor input value: \"" + parsed + "\".");
                                             if (parsed > size.get() * size.get() - 1 || parsed < 0)
-                                                System.out.println(" Value must be between 0 .. "+(size.get() * size.get() - 1)+"");
+                                                System.out.println(" Value must be between 0 .. " + (size.get() * size.get() - 1) + "");
                                             else
                                                 System.out.println(" Value already exist.");
                                             System.exit(1);
@@ -95,16 +95,18 @@ public class Main {
                                     })
                                     .collect(Collectors.toList())
                     );
-                }
-                
-            });
+                }});
+            if (res.size() != size.get() * size.get()) {
+                System.out.println("Map is not valid!");
+                System.exit(1);
+            }
         } catch (IOException e) {
             System.out.println("Bad path!");
             System.out.println(e.getMessage());
             System.exit(1);
         }
         if (res.size() == 0) {
-            System.out.println("Empty map!");
+            System.out.println("Map is not valid!");
             System.exit(1);
         }
         byte[] map = new byte[res.size()];
@@ -139,8 +141,6 @@ public class Main {
             CommandLine cmd = new BasicParser().parse(options, args);
             path = cmd.getOptionValue("map");
             heuristic = cmd.getOptionValue("heuristic");
-            //   if (heuristic == null)
-            //     heuristic = "h";
             size = cmd.hasOption("size") ? new Integer(cmd.getOptionValue("size")) : null;
             stats = cmd.hasOption("stats");
             info = cmd.hasOption("info");
