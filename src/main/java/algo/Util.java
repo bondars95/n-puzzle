@@ -71,7 +71,7 @@ public class Util {
     }
 
     public static void validateArguments(final String path, final String heuristic, final Integer size) {
-        if (path != null && size != null) {
+        if (path != null && size != null || path == null && size == null) {
             System.out.println("Either path to file or size should be choose");
             System.exit(1);
         }
