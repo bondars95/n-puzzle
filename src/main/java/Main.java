@@ -85,7 +85,7 @@ public class Main {
                                         if (parsed > size.get() * size.get() - 1 || parsed < 0 || present.contains(parsed)) {
                                             System.out.print("Map is not valid \n\tFor input value: \""+parsed+"\".");
                                             if (parsed > size.get() * size.get() - 1 || parsed < 0)
-                                                System.out.println(" Value must be between 0 .. "+(size.get() - 1)+"");
+                                                System.out.println(" Value must be between 0 .. "+(size.get() * size.get() - 1)+"");
                                             else
                                                 System.out.println(" Value already exist.");
                                             System.exit(1);
