@@ -31,8 +31,6 @@ public class Util {
             used.add(random);
             field[i] = (byte) random;
         }
-//        if (!isSolvable(field, size))
-  //          return generateMap(size);
         return !isSolvable(field, size) ? generateMap(size) : field;
     }
 
