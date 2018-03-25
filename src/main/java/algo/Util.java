@@ -31,7 +31,9 @@ public class Util {
             used.add(random);
             field[i] = (byte) random;
         }
-        return field;
+//        if (!isSolvable(field, size))
+  //          return generateMap(size);
+        return !isSolvable(field, size) ? generateMap(size) : field;
     }
 
     public static Options parseArguments(final String[] args) {
@@ -84,5 +86,34 @@ public class Util {
             System.exit(1);
         }
 
+    }
+
+    private static int countInversion(byte[] field, int position) {
+        int current = field[position];
+        int count = 0;
+        for (int i = position + 1; i < field.length; i++) {
+            if (field[i] == 0) {
+                continue;
+            }
+            if (current > field[i]) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static boolean isSolvable(byte[] field, int size) {
+        int emptyPosition = 0;
+        int inversion = 0;
+        for (int i = 0; i < field.length; i++){
+            if (field[i] == 0)
+                emptyPosition = i;
+        }
+        for (int i = 0; i < field.length; i++) {
+            inversion += countInversion(field, i);
+        }
+        return (size % 2 != 0 && inversion % 2 == 0)
+                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
+        );
     }
 }
