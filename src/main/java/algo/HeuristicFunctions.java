@@ -40,8 +40,16 @@ class HeuristicFunctions {
     static Integer linearConflicts(final byte[] field) {
         int conflicts = 0;
         int size = (int) Math.sqrt(field.length + 1);
-        
-       
+        for (int i = 0; i < field.length - 1; i++) {
+            if (field[i] == 0 && i == field.length - 2 && field[i + 1] == i + 1) // for zero horisontal conflict
+                conflicts++;
+            else if (field[i] == 0 && i + size < field.length && field[i + size] == i + 1) // for zero vertical conflict
+                conflicts++;
+            else if ((i + 1)%size < size && field[i] == i + 1 + 1 && field[i + 1] == i + 1) // horisontal confilct
+                conflicts++;
+            else if (i + size < field.length && field[i] == i + size + 1 && field[i + size] == i + 1) // vertical conflict
+                conflicts++;
+        }
         return 2*conflicts + manhattanDistance(field);
     }
 }
