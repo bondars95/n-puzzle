@@ -36,4 +36,12 @@ class HeuristicFunctions {
         }
         return res;
     }
+
+    static Integer linearConflicts(final byte[] field) {
+        int conflicts = 0;
+        int size = (int) Math.sqrt(field.length + 1);
+        
+       
+        return 2*conflicts + manhattanDistance(field);
+    }
 }

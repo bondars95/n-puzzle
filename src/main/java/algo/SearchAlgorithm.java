@@ -64,7 +64,7 @@ public final class SearchAlgorithm {
                 this.heuristicFunction = HeuristicFunctions::manhattanDistance;
                 break;
             case "e":
-                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                this.heuristicFunction = HeuristicFunctions::linearConflicts;
                 break;
             default:
                 throw new RuntimeException("WTF");
