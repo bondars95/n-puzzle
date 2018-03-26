@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -38,7 +39,7 @@ public final class SearchAlgorithm {
     /**
      * Heuristic function to calculate node cost.
      */
-    private final Function<byte[], Integer> heuristicFunction;
+    private final BiFunction<byte[], byte[], Integer> heuristicFunction;
 
     public SearchAlgorithm(
             final byte[] field,
@@ -64,7 +65,7 @@ public final class SearchAlgorithm {
                 this.heuristicFunction = HeuristicFunctions::manhattanDistance;
                 break;
             case "e":
-                this.heuristicFunction = HeuristicFunctions::hammingDistance;
+                this.heuristicFunction = HeuristicFunctions::linearConflicts;
                 break;
             default:
                 throw new RuntimeException("WTF");
@@ -87,7 +88,7 @@ public final class SearchAlgorithm {
     public void search(final boolean info, final boolean printPath) {
         openNodes.add(root);
         int openNodesMax = 0;
-        if (!isSolvable(root.state.field, root.state.position)) {
+        if (!Util.isSolvable(root.state.field, size)) {
             System.out.println("Sorry, not solvable");
             return;
         }
@@ -151,40 +152,5 @@ public final class SearchAlgorithm {
             }
         }
         System.out.println();
-    }
-
-    /**
-     * Utility function to count inversion.
-     */
-    private int countInversion(byte[] field, int position) {
-        int current = field[position];
-        int count = 0;
-        for (int i = position + 1; i < field.length; i++) {
-            if (field[i] == 0) {
-                continue;
-            }
-            if (current > field[i]) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-//      If the grid width is odd, then the number of inversions
-//      in a solvable situation is even.
-//      If the grid width is even, and the blank is on an even
-//      row counting from the bottom (second-last, fourth-last etc),
-//      then the number of inversions in a solvable situation is odd.
-//      If the grid width is even, and the blank is on an odd row counting
-//      from the bottom (last, third-last, fifth-last etc)
-//      then the number of inversions in a solvable situation is even.
-    private boolean isSolvable(byte[] field, int emptyPosition) {
-        int inversion = 0;
-        for (int i = 0; i < field.length; i++) {
-            inversion += countInversion(field, i);
-        }
-        return (size % 2 != 0 && inversion % 2 == 0)
-                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
-        );
     }
 }
