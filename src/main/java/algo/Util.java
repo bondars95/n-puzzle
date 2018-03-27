@@ -34,6 +34,48 @@ public class Util {
         return !isSolvable(field, size) ? generateMap(size) : field;
     }
 
+    /**
+     * Generates terminal map.
+     *
+     * @param size Size of map
+     * @return generated map
+     */
+
+    public static byte[] generateTerminalMap(final int size) {
+        ArrayList<Integer> used = new ArrayList<>();
+        byte[] field = new byte[size * size];
+        int[][] matrix = new int[size][size];
+
+        int row = 0;
+        int col = 0;
+        int dx = 1;
+        int dy = 0;
+        int dirChanges = 0;
+        int visits = size;
+ 
+        for (int i = 0; i < size * size; i++) {
+            matrix[row][col] = i + 1;
+            if (i + 1 == size * size)
+                matrix[row][col] = 0;
+            if (--visits == 0) {
+                visits = size * (dirChanges % 2) + 
+                    size * ((dirChanges + 1) % 2) -
+                    (dirChanges / 2 - 1) - 2;
+                int temp = dx;
+                dx = -dy;
+                dy = temp;
+                dirChanges++;
+            }
+            col += dx;
+            row += dy;
+        }
+        for (int i = 0, m = 0; i < size; i++)
+            for (int j = 0; j < size; j++) 
+                field[m++] = (byte) matrix[i][j];
+        return field;
+    }
+
+
     public static Options parseArguments(final String[] args) {
         // Map path
         Option pathOpt = new Option("m", "map", true, "input map path");

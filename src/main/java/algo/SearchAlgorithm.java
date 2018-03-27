@@ -39,12 +39,17 @@ public final class SearchAlgorithm {
      * Heuristic function to calculate node cost.
      */
     private final Function<byte[], Integer> heuristicFunction;
+    /**
+     * Terminal map for heuristic
+     */
+    private final byte[] terminalMap;
 
     public SearchAlgorithm(
             final byte[] field,
             final String heuristic
     ) {
         this.size = (short) Math.sqrt(field.length + 1);
+        terminalMap = Util.generateTerminalMap(size);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
             if (o1.state.cost == o2.state.cost) {
