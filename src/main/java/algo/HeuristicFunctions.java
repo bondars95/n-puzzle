@@ -28,9 +28,6 @@ class HeuristicFunctions {
         int size = (int) Math.sqrt(field.length + 1);
         
         for (int i = 0; i < field.length; i++) {
-            if (i == field.length - 1 && field[i] == 0) {
-                continue;
-            }
             if (field[i] != terminalMap[i]) {
                 int pos = getValuePosition(terminalMap, field[i]);
                 res += countDistance(i % size, (i + 1) / size, pos % size, pos / size);
@@ -42,12 +39,11 @@ class HeuristicFunctions {
     static Integer hammingDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         for (int i = 0; i < field.length; i++) {
-            if (i == getZeroPosition(terminalMap) && field[i] == 0) {
+            /*if (field[i] == 0 && field[i] == terminalMap[i]) {
                 continue;
-            }
-            if (field[i] != terminalMap[i]) {
+            }*/
+            if (field[i] != terminalMap[i])
                 res++;
-            }
         }
         return res;
     }
@@ -60,15 +56,6 @@ class HeuristicFunctions {
                 conflicts++;
             else if ((i + size) < field.length && field[i] == terminalMap[i + size] && field[i + size] == terminalMap[i])
                 conflicts++;
-
-       /*     if (field[i] == 0 && i == field.length - 2 && field[i + 1] == i + 1) // for zero horisontal conflict
-                conflicts++;
-            else if (field[i] == 0 && i + size < field.length && field[i + size] == i + 1) // for zero vertical conflict
-                conflicts++;
-            else if ((i + 1)%size < size && field[i] == getValuePosition(terminalMap[i+1]) && field[i + 1] == getValuePosition(terminalMap[i])) // horisontal confilct
-                conflicts++;
-            else if (i + size < field.length && field[i] == i + size + 1 && field[i + size] == i + 1) // vertical conflict
-                conflicts++;*/
         }
         return 2*conflicts + manhattanDistance(field, terminalMap);
     }
