@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -38,7 +39,7 @@ public final class SearchAlgorithm {
     /**
      * Heuristic function to calculate node cost.
      */
-    private final Function<byte[], Integer> heuristicFunction;
+    private final BiFunction<byte[], byte[], Integer> heuristicFunction;
     /**
      * Terminal map for heuristic
      */
@@ -49,7 +50,7 @@ public final class SearchAlgorithm {
             final String heuristic
     ) {
         this.size = (short) Math.sqrt(field.length + 1);
-        terminalMap = Util.generateTerminalMap(size);
+        this.terminalMap = Util.generateTerminalMap(size);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
             if (o1.state.cost == o2.state.cost) {
@@ -96,7 +97,7 @@ public final class SearchAlgorithm {
             System.out.println("Sorry, not solvable");
             return;
         }
-        root.state.cost = heuristicFunction.apply(root.state.field);
+        root.state.cost = heuristicFunction.apply(root.state.field, terminalMap);
         printField(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {
             Node n = openNodes.poll();
@@ -113,7 +114,7 @@ public final class SearchAlgorithm {
                 State state = n.state.move(Transition.values()[i], size);
                 if (state != null) {
                     Node node = new Node(n, state);
-                    node.state.cost = heuristicFunction.apply(node.state.field);
+                    node.state.cost = heuristicFunction.apply(node.state.field, terminalMap);
                     openNodes.add(node);
                 }
             }

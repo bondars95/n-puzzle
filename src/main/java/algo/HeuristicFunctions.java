@@ -1,5 +1,8 @@
 package algo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class HeuristicFunctions {
 
     private static int countDistance(int x1, int y1, int x2, int y2) {
@@ -8,7 +11,7 @@ class HeuristicFunctions {
 
     private static int getZeroPosition(final byte[] field) {
         int size = (int) Math.sqrt(field.length + 1);
-        return size % 2 == 0 ? (field.length / 2) + size / 2 : (field.length / 2) + 1;
+        return size % 2 == 0 ? (field.length / 2) + size / 2 : (field.length + 1) / 2;
     }
 
     private static int getValuePosition(final byte[] field, byte val) {
@@ -19,26 +22,25 @@ class HeuristicFunctions {
         }
         throw new RuntimeException("Not found");
     }
-    
-    static int manhattanDistance(final byte[] field) {
+
+    static int manhattanDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         int size = (int) Math.sqrt(field.length + 1);
+        
         for (int i = 0; i < field.length; i++) {
             if (i == field.length - 1 && field[i] == 0) {
                 continue;
             }
-            if (field[i] != i + 1) {
-                if (field[i] == 0) {
-                    res += countDistance(i % size, (i + 1) / size, size - 1, size);
-                } else {
-                    res += countDistance(i % size, (i + 1) / size, (field[i] - 1) % size, field[i] / size);
-                }
+            if (field[i] != terminalMap[i]) {
+                int pos = field[i] == 0 ? getZeroPosition(terminalMap) : getValuePosition(terminalMap, field[i]);
+                res += countDistance(i % size, (i + 1) / size, pos % size, pos / size);
+                //System.out.println(countDistance(i % size, (i + 1) / size, pos % size, pos / size));
             }
         }
         return res;
     }
 
-    static Integer hammingDistance(final byte[] field) {
+    static Integer hammingDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         for (int i = 0; i < field.length; i++) {
             if (i == field.length - 1 && field[i] == 0) {
@@ -51,7 +53,7 @@ class HeuristicFunctions {
         return res;
     }
 
-    static Integer linearConflicts(final byte[] field) {
+    static Integer linearConflicts(final byte[] field, final byte[] terminalMap) {
         int conflicts = 0;
         int size = (int) Math.sqrt(field.length + 1);
         for (int i = 0; i < field.length - 1; i++) {
@@ -64,6 +66,6 @@ class HeuristicFunctions {
             else if (i + size < field.length && field[i] == i + size + 1 && field[i + size] == i + 1) // vertical conflict
                 conflicts++;
         }
-        return 2*conflicts + manhattanDistance(field);
+        return 2*conflicts + manhattanDistance(field, terminalMap);
     }
 }
