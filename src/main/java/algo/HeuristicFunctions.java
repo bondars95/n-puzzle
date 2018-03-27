@@ -11,7 +11,7 @@ class HeuristicFunctions {
 
     private static int getZeroPosition(final byte[] field) {
         int size = (int) Math.sqrt(field.length + 1);
-        return size % 2 == 0 ? (field.length / 2) + size / 2 : (field.length + 1) / 2;
+        return size % 2 == 0 ? (field.length / 2) + size / 2  - 1 : (field.length) / 2;
     }
 
     private static int getValuePosition(final byte[] field, byte val) {
@@ -32,9 +32,8 @@ class HeuristicFunctions {
                 continue;
             }
             if (field[i] != terminalMap[i]) {
-                int pos = field[i] == 0 ? getZeroPosition(terminalMap) : getValuePosition(terminalMap, field[i]);
+                int pos = getValuePosition(terminalMap, field[i]);
                 res += countDistance(i % size, (i + 1) / size, pos % size, pos / size);
-                //System.out.println(countDistance(i % size, (i + 1) / size, pos % size, pos / size));
             }
         }
         return res;
@@ -43,10 +42,10 @@ class HeuristicFunctions {
     static Integer hammingDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         for (int i = 0; i < field.length; i++) {
-            if (i == field.length - 1 && field[i] == 0) {
+            if (i == getZeroPosition(terminalMap) && field[i] == 0) {
                 continue;
             }
-            if (field[i] != i + 1) {
+            if (field[i] != terminalMap[i]) {
                 res++;
             }
         }
@@ -57,14 +56,19 @@ class HeuristicFunctions {
         int conflicts = 0;
         int size = (int) Math.sqrt(field.length + 1);
         for (int i = 0; i < field.length - 1; i++) {
-            if (field[i] == 0 && i == field.length - 2 && field[i + 1] == i + 1) // for zero horisontal conflict
+            if ((i + 1)%size < size && field[i] == terminalMap[i + 1] && field[i + 1] == terminalMap[i])
+                conflicts++;
+            else if ((i + size) < field.length && field[i] == terminalMap[i + size] && field[i + size] == terminalMap[i])
+                conflicts++;
+
+       /*     if (field[i] == 0 && i == field.length - 2 && field[i + 1] == i + 1) // for zero horisontal conflict
                 conflicts++;
             else if (field[i] == 0 && i + size < field.length && field[i + size] == i + 1) // for zero vertical conflict
                 conflicts++;
-            else if ((i + 1)%size < size && field[i] == i + 1 + 1 && field[i + 1] == i + 1) // horisontal confilct
+            else if ((i + 1)%size < size && field[i] == getValuePosition(terminalMap[i+1]) && field[i + 1] == getValuePosition(terminalMap[i])) // horisontal confilct
                 conflicts++;
             else if (i + size < field.length && field[i] == i + size + 1 && field[i + size] == i + 1) // vertical conflict
-                conflicts++;
+                conflicts++;*/
         }
         return 2*conflicts + manhattanDistance(field, terminalMap);
     }
