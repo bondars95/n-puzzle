@@ -128,6 +128,9 @@ public class Util {
 
     }
 
+    /**
+     * Utility function to count inversion.
+     */
     private static int countInversion(byte[] field, int position) {
         int current = field[position];
         int count = 0;
@@ -142,7 +145,15 @@ public class Util {
         return count;
     }
 
-    private static boolean isSolvable(byte[] field, int size) {
+//        If the grid width is odd, then the number of inversions
+//      in a solvable situation is even.
+//      If the grid width is even, and the blank is on an even
+//      row counting from the bottom (second-last, fourth-last etc),
+//      then the number of inversions in a solvable situation is odd.
+//      If the grid width is even, and the blank is on an odd row counting
+//      from the bottom (last, third-last, fifth-last etc)
+//      then the number of inversions in a solvable situation is even.
+    public static boolean isSolvable(byte[] field, int size) {
         int emptyPosition = 0;
         int inversion = 0;
         for (int i = 0; i < field.length; i++){
