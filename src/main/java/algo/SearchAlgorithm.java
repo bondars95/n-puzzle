@@ -93,10 +93,10 @@ public final class SearchAlgorithm {
     public void search(final boolean info, final boolean printPath) {
         openNodes.add(root);
         int openNodesMax = 0;
-     /*   if (!Util.isSolvable(root.state.field, root.state.position)) {
+        if (!Util.isSolvable(root.state.field, root.state.position)) {
             System.out.println("Sorry, not solvable");
             return;
-        }*/
+        }
         root.state.cost = heuristicFunction.apply(root.state.field, terminalMap);
         printField(root.state.field);
         while (!openNodes.isEmpty() && path.isEmpty()) {

@@ -165,6 +165,7 @@ public class Util {
     public static boolean isSolvable(byte[] field, int size) {
         int emptyPosition = 0;
         int inversion = 0;
+        size = (int) Math.sqrt(field.length + 1);
         for (int i = 0; i < field.length; i++){
             if (field[i] == 0)
                 emptyPosition = i;
