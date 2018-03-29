@@ -97,9 +97,17 @@ public class Util {
                 "h",
                 "heuristic",
                 true,
-                "choose one of heuristic (h - hammington, m - manhattan, e - eqluid)"
+                "choose one of heuristic (h - hammington, m - manhattan, e - linear conflicts)"
         );
         heuristicOpt.setRequired(true);
+
+        Option finalMapOpt = new Option(
+                "f",
+                "final",
+                true,
+                "choose final terminal map (l - linear solution, s - snaike solution)"
+        );
+        finalMapOpt.setRequired(false);
 
         Options options = new Options();
         options.addOption(pathOpt);
@@ -108,6 +116,7 @@ public class Util {
         options.addOption(heuristicOpt);
         options.addOption(statsOpt);
         options.addOption(infoOpt);
+        options.addOption(finalMapOpt);
 
         return options;
     }
@@ -163,8 +172,8 @@ public class Util {
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }
-        return (size % 2 != 0 && inversion % 2 == 0)
-                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
-        );
+        boolean res = (size % 2 != 0 && inversion % 2 == 0)
+                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)); 
+        return size % 2 == 0 ? res : !res;
     }
 }

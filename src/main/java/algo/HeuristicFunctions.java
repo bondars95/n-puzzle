@@ -26,7 +26,6 @@ class HeuristicFunctions {
     static int manhattanDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         int size = (int) Math.sqrt(field.length + 1);
-        
         for (int i = 0; i < field.length; i++) {
             if (field[i] != terminalMap[i]) {
                 int pos = getValuePosition(terminalMap, field[i]);
@@ -39,9 +38,6 @@ class HeuristicFunctions {
     static Integer hammingDistance(final byte[] field, final byte[] terminalMap) {
         int res = 0;
         for (int i = 0; i < field.length; i++) {
-            /*if (field[i] == 0 && field[i] == terminalMap[i]) {
-                continue;
-            }*/
             if (field[i] != terminalMap[i])
                 res++;
         }
