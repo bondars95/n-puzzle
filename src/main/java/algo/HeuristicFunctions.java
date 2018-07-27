@@ -9,11 +9,6 @@ class HeuristicFunctions {
         return (int) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
-    private static int getZeroPosition(final byte[] field) {
-        int size = (int) Math.sqrt(field.length + 1);
-        return size % 2 == 0 ? (field.length / 2) + size / 2  - 1 : (field.length) / 2;
-    }
-
     private static int getValuePosition(final byte[] field, byte val) {
         for (int i = 0; i < field.length; i++) {
             if (field[i] == val) {

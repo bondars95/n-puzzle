@@ -1,5 +1,6 @@
 package algo;
 
+import game.OrderType;
 import org.apache.commons.cli.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Util {
      * @param size Size of map
      * @return generated map
      */
-    public static byte[] generateMap(final int size) {
+    public static byte[] generateMap(final int size, OrderType type) {
         ArrayList<Integer> used = new ArrayList<>();
         byte[] field = new byte[size * size];
         for (int i = 0; i < field.length; i++) {
@@ -31,7 +32,7 @@ public class Util {
             used.add(random);
             field[i] = (byte) random;
         }
-        return !isSolvable(field, size) ? generateMap(size) : field;
+        return !isSolvable(field, type) ? generateMap(size, type) : field;
     }
 
     /**
@@ -41,37 +42,45 @@ public class Util {
      * @return generated map
      */
 
-    public static byte[] generateTerminalMap(final int size) {
+    public static byte[] generateTerminalMap(final int size, final OrderType type) {
         ArrayList<Integer> used = new ArrayList<>();
         byte[] field = new byte[size * size];
         int[][] matrix = new int[size][size];
 
-        int row = 0;
-        int col = 0;
-        int dx = 1;
-        int dy = 0;
-        int dirChanges = 0;
-        int visits = size;
- 
-        for (int i = 0; i < size * size; i++) {
-            matrix[row][col] = i + 1;
-            if (i + 1 == size * size)
-                matrix[row][col] = 0;
-            if (--visits == 0) {
-                visits = size * (dirChanges % 2) + 
-                    size * ((dirChanges + 1) % 2) -
-                    (dirChanges / 2 - 1) - 2;
-                int temp = dx;
-                dx = -dy;
-                dy = temp;
-                dirChanges++;
+        if (type == OrderType.LINEAR) {
+            // generating linear map
+            for (int i = 1; i < size * size; i++) {
+                field[i - 1] = (byte) i;
             }
-            col += dx;
-            row += dy;
+        } else {
+            // generating snail map
+            int row = 0;
+            int col = 0;
+            int dx = 1;
+            int dy = 0;
+            int dirChanges = 0;
+            int visits = size;
+
+            for (int i = 0; i < size * size; i++) {
+                matrix[row][col] = i + 1;
+                if (i + 1 == size * size)
+                    matrix[row][col] = 0;
+                if (--visits == 0) {
+                    visits = size * (dirChanges % 2) +
+                            size * ((dirChanges + 1) % 2) -
+                            (dirChanges / 2 - 1) - 2;
+                    int temp = dx;
+                    dx = -dy;
+                    dy = temp;
+                    dirChanges++;
+                }
+                col += dx;
+                row += dy;
+            }
+            for (int i = 0, m = 0; i < size; i++)
+                for (int j = 0; j < size; j++)
+                    field[m++] = (byte) matrix[i][j];
         }
-        for (int i = 0, m = 0; i < size; i++)
-            for (int j = 0; j < size; j++) 
-                field[m++] = (byte) matrix[i][j];
         return field;
     }
 
@@ -121,7 +130,7 @@ public class Util {
         return options;
     }
 
-    public static void validateArguments(final String path, final String heuristic, final Integer size) {
+    public static void validateArguments(final String path, final String heuristic, final Integer size, final String finalMap) {
         if (path != null && size != null || path == null && size == null) {
             System.out.println("Either path to file or size should be choose");
             System.exit(1);
@@ -132,6 +141,10 @@ public class Util {
         }
         if (!heuristic.equals("h") && !heuristic.equals("m") && !heuristic.equals("e")) {
             System.out.println("Unknown heuristic " + heuristic);
+            System.exit(1);
+        }
+        if (!finalMap.equals("l") && !finalMap.equals("s")) {
+            System.out.println("Wrong terminal map value");
             System.exit(1);
         }
 
@@ -162,10 +175,10 @@ public class Util {
 //      If the grid width is even, and the blank is on an odd row counting
 //      from the bottom (last, third-last, fifth-last etc)
 //      then the number of inversions in a solvable situation is even.
-    public static boolean isSolvable(byte[] field, int size) {
+    public static boolean isSolvable(byte[] field, OrderType type) {
         int emptyPosition = 0;
         int inversion = 0;
-        size = (int) Math.sqrt(field.length + 1);
+        int size = (int) Math.sqrt(field.length + 1);
         for (int i = 0; i < field.length; i++){
             if (field[i] == 0)
                 emptyPosition = i;
@@ -173,8 +186,14 @@ public class Util {
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }
-        boolean res = (size % 2 != 0 && inversion % 2 == 0)
-                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)); 
-        return size % 2 == 0 ? res : !res;
+        if (type.equals(OrderType.LINEAR)) {
+            return (size % 2 != 0 && inversion % 2 == 0)
+                    || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
+            );
+        } else {
+            boolean res = (size % 2 != 0 && inversion % 2 == 0)
+                    || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2));
+            return (size % 2 == 0) == res;
+        }
     }
 }

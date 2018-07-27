@@ -1,6 +1,7 @@
 package algo;
 
 import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
+import game.OrderType;
 import game.State;
 import game.Transition;
 import graph.Node;
@@ -10,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * A star algorithm implementation.
@@ -44,13 +44,16 @@ public final class SearchAlgorithm {
      * Terminal map for heuristic
      */
     private final byte[] terminalMap;
+    private final OrderType orderType;
+
 
     public SearchAlgorithm(
             final byte[] field,
+            final OrderType orderType,
             final String heuristic
     ) {
         this.size = (short) Math.sqrt(field.length + 1);
-        this.terminalMap = Util.generateTerminalMap(size);
+        this.terminalMap = Util.generateTerminalMap(size, orderType);
         // comparator for sorting nodes based on its cost
         this.openNodes = new PriorityQueue<>((o1, o2) -> {
             if (o1.state.cost == o2.state.cost) {
@@ -59,6 +62,7 @@ public final class SearchAlgorithm {
                 return o1.state.cost - o2.state.cost;
             }
         });
+        this.orderType = orderType;
         // high performance map
         this.closedNodes = new ObjectObjectOpenHashMap<>();
         this.path = new ArrayList<>();
@@ -93,7 +97,7 @@ public final class SearchAlgorithm {
     public void search(final boolean info, final boolean printPath) {
         openNodes.add(root);
         int openNodesMax = 0;
-        if (!Util.isSolvable(root.state.field, root.state.position)) {
+        if (!Util.isSolvable(root.state.field, this.orderType)) {
             System.out.println("Sorry, not solvable");
             return;
         }
