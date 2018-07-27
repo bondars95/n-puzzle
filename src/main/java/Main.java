@@ -157,7 +157,9 @@ public class Main {
         try {
             doAlgo(map, heuristic, info, printPath);
         } catch (OutOfMemoryError e) {
-            ready.set(true);
+            System.out.println("Error. Out of memory");
+            System.exit(1);
         }
+        ready.set(true);
     }
 }
