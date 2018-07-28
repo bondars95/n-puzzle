@@ -116,7 +116,7 @@ public class Util {
                 true,
                 "choose final terminal map (l - linear solution, s - snaike solution)"
         );
-        finalMapOpt.setRequired(false);
+        finalMapOpt.setRequired(true);
 
         Options options = new Options();
         options.addOption(pathOpt);
@@ -153,21 +153,61 @@ public class Util {
     /**
      * Utility function to count inversion.
      */
-    private static int countInversion(byte[] field, int position) {
+    private static int countInversion(byte[] field, int position, OrderType type) {
         int current = field[position];
         int count = 0;
-        for (int i = position + 1; i < field.length; i++) {
-            if (field[i] == 0) {
-                continue;
+        if (type == OrderType.LINEAR) {
+            for (int i = position + 1; i < field.length; i++) {
+                if (field[i] == 0) {
+                    continue;
+                }
+                if (current > field[i]) {
+                    count++;
+                }
             }
-            if (current > field[i]) {
-                count++;
+        } else {
+            int size = (int) Math.sqrt(field.length);
+            byte[][] matrix = new byte[size][size];
+            for (int i = 0; i < field.length; i++) {
+                matrix[i / size][i % size] = field[i];
+            }
+            // generating snail map
+            int row = 0;
+            int col = 0;
+            int dx = 1;
+            int dy = 0;
+            int dirChanges = 0;
+            int visits = size;
+            boolean startCalc = false;
+
+            for (int i = 0; i < size * size; i++) {
+                if (matrix[row][col] == current) {
+                    startCalc = true;
+                }
+                if (matrix[row][col] == 0) {
+                    //skip
+                } else {
+                    if (startCalc && current > matrix[row][col]) {
+                        count++;
+                    }
+                }
+                if (--visits == 0) {
+                    visits = size * (dirChanges % 2) +
+                            size * ((dirChanges + 1) % 2) -
+                            (dirChanges / 2 - 1) - 2;
+                    int temp = dx;
+                    dx = -dy;
+                    dy = temp;
+                    dirChanges++;
+                }
+                col += dx;
+                row += dy;
             }
         }
         return count;
     }
 
-//        If the grid width is odd, then the number of inversions
+    //        If the grid width is odd, then the number of inversions
 //      in a solvable situation is even.
 //      If the grid width is even, and the blank is on an even
 //      row counting from the bottom (second-last, fourth-last etc),
@@ -179,21 +219,21 @@ public class Util {
         int emptyPosition = 0;
         int inversion = 0;
         int size = (int) Math.sqrt(field.length + 1);
-        for (int i = 0; i < field.length; i++){
+        for (int i = 0; i < field.length; i++) {
             if (field[i] == 0)
                 emptyPosition = i;
         }
         for (int i = 0; i < field.length; i++) {
-            inversion += countInversion(field, i);
+            inversion += countInversion(field, i, type);
         }
-        if (type.equals(OrderType.LINEAR)) {
-            return (size % 2 != 0 && inversion % 2 == 0)
-                    || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
-            );
-        } else {
-            boolean res = (size % 2 != 0 && inversion % 2 == 0)
-                    || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2));
-            return (size % 2 == 0) == res;
-        }
+//        if (type.equals(OrderType.LINEAR)) {
+        return (size % 2 != 0 && inversion % 2 == 0)
+                || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2)
+        );
+//        } else {
+//            boolean res = (size % 2 != 0 && inversion % 2 == 0)
+//                    || (size % 2 == 0 && (((emptyPosition / size) + 1) % 2 == inversion % 2));
+//            return (size % 2 == 0) == res;
+//        }
     }
 }
