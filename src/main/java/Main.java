@@ -1,4 +1,5 @@
 import algo.SearchAlgorithm;
+import game.OrderType;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -116,9 +118,9 @@ public class Main {
         return map;
     }
 
-    private static void doAlgo(final byte[] map, final String heuristic, final boolean info, final boolean path) {
+    private static void doAlgo(final byte[] map, final OrderType orderType, final String heuristic, final boolean info, final boolean path) {
         double begin = System.currentTimeMillis();
-        new SearchAlgorithm(map, heuristic).search(info, path);
+        new SearchAlgorithm(map, orderType, heuristic).search(info, path);
         if (info) {
             System.out.println("Execution time in seconds: " + (System.currentTimeMillis() - begin) / 1000. + " sec.");
         }
@@ -137,6 +139,7 @@ public class Main {
         boolean stats;
         boolean info;
         boolean printPath;
+        String orderType;
         try {
             CommandLine cmd = new BasicParser().parse(options, args);
             path = cmd.getOptionValue("map");
@@ -145,17 +148,19 @@ public class Main {
             stats = cmd.hasOption("stats");
             info = cmd.hasOption("info");
             printPath = cmd.hasOption("path");
-            validateArguments(path, heuristic, size);
+            orderType = cmd.getOptionValue("final");
+            validateArguments(path, heuristic, size, orderType);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             new HelpFormatter().printHelp("npuzzle", options);
             System.exit(1);
             return;
         }
-        byte[] map = size != null ? generateMap(size) : readMap(path);
+        OrderType ordering = Objects.equals(orderType, "s") ? OrderType.SNAIL : OrderType.LINEAR;
+        byte[] map = size != null ? generateMap(size, ordering) : readMap(path);
         if (stats) attachMemoryStats();
         try {
-            doAlgo(map, heuristic, info, printPath);
+            doAlgo(map, ordering, heuristic, info, printPath);
         } catch (OutOfMemoryError e) {
             System.out.println("Error. Out of memory");
             System.exit(1);
