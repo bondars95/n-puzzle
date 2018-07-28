@@ -170,6 +170,8 @@ public class Util {
             if (field[i] == 0)
                 emptyPosition = i;
         }
+        if (size == 1)
+            return true;
         for (int i = 0; i < field.length; i++) {
             inversion += countInversion(field, i);
         }
